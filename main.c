@@ -5,19 +5,32 @@
 void receber(int num, char** titulo, char** autor, int* ano, int* quantidade){
     for (int i = 0; i < num; i++){
         titulo[i] = (char*) malloc(100 * sizeof(char));
-        autor[i] = (char*) malloc(100 * sizeof(char));
+        autor[i] = (char*) malloc(50 * sizeof(char));
 
-        fscanf(stdin, " %99[^,], %99[^,], %d", titulo[i], autor[i], &ano[i]);
-	quantidade[i] = 1;
+        fscanf(stdin, " %99[^,], %49[^,], %d", titulo[i], autor[i], &ano[i]);
 
-	for (int j = 0; j < i; j++){
-		if (strcmp(titulo[i], titulo[j]) == 0 && strcmp(autor[i], autor[j]) == 0 && ano[i] == ano[j]){
-			quantidade[j]++;
-			quantidade[i]--;
-			break;
-		}
-	}
-	getchar();
+        titulo[i+1] = (char*) malloc(100 * sizeof(char));
+        autor[i+1] = (char*) malloc(50 * sizeof(char));
+        ano[i+1] = (int*) malloc(sizeof(int));
+        quantidade[i+1] = (int*) malloc(sizeof(int));
+
+        quantidade[i] = 1;
+
+        int is_duplicate = 0;
+        for (int j = 0; j < i; j++){
+            if (strcmp(titulo[i], titulo[j]) == 0 && strcmp(autor[i], autor[j]) == 0 && ano[i] == ano[j]){
+                quantidade[j]++;
+                is_duplicate = 1;
+                break;
+            }
+        }
+
+        if (is_duplicate) {
+            free(titulo[i+1]);
+            free(autor[i+1]);
+            free(ano[i+1]);
+            free(quantidade[i+1]);
+        }
     }
 }
 
@@ -62,3 +75,4 @@ int main()
 
     return 0;
 }
+
