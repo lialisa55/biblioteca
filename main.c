@@ -2,38 +2,39 @@
 #include <stdlib.h>
 #include <string.h>
 
-void receber(int num, char** titulo, char** autor, int* ano, int* quantidade){
+void receber(int num, char** titulos, char** autores, int* anos, int* quantidades){
     for (int i = 0; i < num; i++){
-        titulo[i] = (char*) malloc(100 * sizeof(char));
-        autor[i] = (char*) malloc(100 * sizeof(char));
+        char titulo[100], autor[50];
+        int ano;
+        scanf(" %99[^,], %49[^,], %d", titulo, autor, &ano);
 
-        fscanf(stdin, " %99[^,], %99[^,], %d", titulo[i], autor[i], &ano[i]);
-	quantidade[i] = 1;
-
-	for (int j = 0; j < i; j++){
-		if (strcmp(titulo[i], titulo[j]) == 0 && strcmp(autor[i], autor[j]) == 0 && ano[i] == ano[j]){
-			quantidade[j]++;
-			quantidade[i]--;
-			break;
-		}
-	}
-	getchar();
+        int is_duplicate = 0;
+        for (int j = 0; j < i; j++){
+            if (strcmp(titulo, titulos[j]) == 0 &&
+                strcmp(autor, autores[j]) == 0 &&
+                ano == anos[j]){
+                quantidades[j]++;
+                is_duplicate = 1;
+                break;
+            }
+        }
+        if(!is_duplicate){
+            titulos[i] = strdup(titulo);
+            autores[i] = strdup(autor);
+            anos[i] = ano;
+            quantidades[i] = 1;
+        }
     }
 }
 
-void catalogar(int num, char** titulo, char** autor, int* ano, int* quantidade){
-	printf("Catalogo de Livros:\n");
-	for (int i = 0; i < num; i++) {
-		if(quantidade[i] > 0) {
-			printf("Livro %d:\nTitulo: %s\nAutor: %s\nAno: %d\nQuantidade: %d\n", i+1, titulo[i], autor[i], ano[i], quantidade[i]);
-			if(i != num-1){
-				printf("\n");
-			}
-		}
-		else{
-			i--;
-		}
-	}
+void catalogar(int num, char** titulos, char** autores, int* anos, int* quantidades){
+    printf("Catalogo de Livros:\n");
+    for (int i = 0; i < num; i++) {
+        printf("Livro %d:\nTitulo: %s\nAutor: %s\nAno: %d\nQuantidade: %d\n", i+1, titulos[i], autores[i], anos[i], quantidades[i]);
+        if(i != num-1){
+            printf("\n");
+        }
+    }
 }
 
 int main()
@@ -41,24 +42,23 @@ int main()
     int n;
     scanf("%d", &n);
     getchar();
-    char **titulo, **autor;
-    int *ano, *quantidade;
-    titulo = (char**) malloc(n * sizeof(char*));
-    autor = (char**) malloc(n * sizeof(char*));
-    ano = (int*) malloc(n * sizeof(int));
-    quantidade = (int*) calloc(n, sizeof(int));
 
-    receber(n, titulo, autor, ano, quantidade);
-    catalogar(n, titulo, autor, ano, quantidade);
+    char **titulos = malloc(n * sizeof(char*));
+    char **autores = malloc(n * sizeof(char*));
+    int *anos = malloc(n * sizeof(int));
+    int *quantidades = calloc(n, sizeof(int));
+
+    receber(n, titulos, autores, anos, quantidades);
+    catalogar(n, titulos, autores, anos, quantidades);
 
     for(int i = 0; i < n; i++){
-	    free(titulo[i]);
-	    free(autor[i]);
+        free(titulos[i]);
+        free(autores[i]);
     }
-    free(titulo);
-    free(autor);
-    free(ano);
-    free(quantidade);
+    free(titulos);
+    free(autores);
+    free(anos);
+    free(quantidades);
 
     return 0;
 }
